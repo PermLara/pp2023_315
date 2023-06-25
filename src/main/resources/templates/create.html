@@ -1,10 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Create a User</title>
+
 </head>
 <body>
-$END$
+<h1>Create a User</h1>
+<a th:href="@{/admin/users}">Back to User List</a>
+<br/><br/>
+<form method="post" th:action="@{/admin/create}" th:object="${user}">
+    <div th:if="${user}">
+        <table>
+            <tr>
+                <td><label for="nickName">Enter nickname:</label></td>
+                <td><input th:type="text" th:field="${user.username}" id="nickName"/></td>
+            </tr>
+            <tr>
+                <td><label for="password">Enter password:</label></td>
+                <td><input th:type="text" th:field="${user.password}" id="password"/></td>
+            </tr>
+            <tr>
+                <td><label for="firstName">Enter name:</label></td>
+                <td><input th:type="text" th:field="${user.firstName}" id="firstName"/></td>
+            </tr>
+            <tr>
+                <td><label for="lastName">Enter surname:</label></td>
+                <td><input th:type="text" th:field="${user.lastName}" id="lastName"/></td>
+            </tr>
+            <tr>
+                <td><label for="email">Enter email:</label></td>
+                <td><input th:type="text" th:field="${user.email}" id="email"/></td>
+            </tr>
+        </table>
+    </div>
+    <input type="submit" value="Create"/>
+</form>
+
+<div>
+    <a th:href="@{/login}">Logout</a>
+</div>
 </body>
 </html>

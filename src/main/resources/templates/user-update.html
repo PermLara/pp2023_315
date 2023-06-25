@@ -5,9 +5,14 @@
     <title>Edit the User</title>
 </head>
 <body>
-<form action="#" th:action="@{/update}" th:object="${user}" method="post">
+<a th:href="@{/admin/users}">Back to User List</a>
+<form action="#" th:action="@{/admin/user-update}" th:object="${user}" method="post">
     <label for="id">ID</label>
     <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
+    <br/>
+    <input type="hidden" th:field="*{username}" id="username"/>
+    <br/>
+    <input type="hidden" th:field="*{password}" id="password"/>
     <br/>
     <label for="firstName">First Name</label>
     <input type="text" th:field="*{firstName}" id="firstName" placeholder="First Name">
@@ -20,5 +25,8 @@
     <br/>
     <input type="submit" value="Update">
 </form>
+<div>
+    <a th:href="@{/login}">Logout</a>
+</div>
 </body>
 </html>

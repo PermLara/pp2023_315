@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8"/>
+    <title>My profile</title>
 </head>
 <body>
-$END$
+<h1>View a profile</h1>
+
+<br/><br/>
+<div th:if="${user}">
+    <table>
+        <tr>
+            <td>ID:</td>
+            <td th:utext="${user.id}">...</td>
+        </tr>
+        <tr>
+            <td>Name:</td>
+            <td th:utext="${user.firstName}">...</td>
+        </tr>
+        <tr>
+            <td>Last Name:</td>
+            <td th:utext="${user.lastName}">...</td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td th:utext="${user.email}">...</td>
+        </tr>
+    </table>
+    <br/><br/>
+</div>
+<div>
+    <a th:href="@{/login}">Logout</a>
+</div>
+<div th:if="${errorMessage}" th:utext="${errorMessage}" class="error">...</div>
 </body>
 </html>

@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Spring Security Example</title>
 </head>
 <body>
-$END$
+<h1>Admin, welcome spring boot security page!</h1>
+<div>
+    <p><a th:href="@{/admin/users}">All Users</a></p>
+    <p><a th:href="@{/admin/create}">Create a new User</a></p>
+    <p><a th:href="@{/user}">View a profile</a></p>
+
+</div>
+<div>
+    <a th:href="@{/login}">Logout</a>
+</div>
+
 </body>
 </html>
