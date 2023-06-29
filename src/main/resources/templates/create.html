@@ -32,8 +32,22 @@
                 <td><label for="email">Enter email:</label></td>
                 <td><input th:type="text" th:field="${user.email}" id="email"/></td>
             </tr>
+
         </table>
     </div>
+    <div>
+        <p>
+            <label>Roles:
+                <input type="checkbox" name="roles"
+                       th:each="role : ${roleSelect}"
+                       th:text="${role.name}"
+                       th:value="${role.id}"
+                       th:field="${user.roles}"
+                />
+            </label>
+        </p>
+    </div>
+
     <input type="submit" value="Create"/>
 </form>
 

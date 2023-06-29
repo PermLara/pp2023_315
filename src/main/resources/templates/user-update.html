@@ -10,9 +10,11 @@
     <label for="id">ID</label>
     <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
     <br/>
-    <input type="hidden" th:field="*{username}" id="username"/>
+    <label for="nickName">Nickname</label>
+    <input type="text" th:field="*{username}" id="nickName"/>
     <br/>
-    <input type="hidden" th:field="*{password}" id="password"/>
+    <label for="password">Password</label>
+    <input type="text" id="password" th:field="*{password}"/>
     <br/>
     <label for="firstName">First Name</label>
     <input type="text" th:field="*{firstName}" id="firstName" placeholder="First Name">
@@ -23,6 +25,16 @@
     <label for="email">Email</label>
     <input type="text" th:field="*{email}" id="email" placeholder="Email">
     <br/>
+    <p>
+        <label>Roles:
+            <input type="checkbox" name="roles"
+                   th:each="role : ${roleSelect}"
+                   th:text="${role.name}"
+                   th:value="${role.id}"
+                   th:field="*{roles}"
+            />
+        </label>
+    </p>
     <input type="submit" value="Update">
 </form>
 <div>

@@ -24,6 +24,20 @@
                 <td th:text="${user.firstName}"></td>
                 <td th:text="${user.lastName}"></td>
                 <td th:text="${user.email}"></td>
+                <td>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Authority role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="role : ${user.roles}">
+                            <td th:text="${role.name}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
                 <td><a th:href="@{user-update/{id}(id=${user.id})}">Edit</a></td>
                 <td><a th:href="@{delete/{id}(id=${user.id})}">Delete</a></td>
             </tr>
