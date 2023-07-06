@@ -28,8 +28,6 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    private String email;
-
     @Column(unique = true)
     private String username;
 
@@ -52,11 +50,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email,
+    public User(String firstName, String lastName,
                 String username, String password, List<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -80,5 +77,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public List<String> getRolesNames() {
+        return roles.stream().map(Role::getName)
+                .collect(Collectors.toList());
     }
 }

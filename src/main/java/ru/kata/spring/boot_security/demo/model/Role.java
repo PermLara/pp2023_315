@@ -38,4 +38,8 @@ public class Role implements GrantedAuthority {
     public List<User> getUsers() {
         return users;
     }
+
+    public String getShortName() {
+        return name.replaceAll("ROLE_","");
+    }
 }

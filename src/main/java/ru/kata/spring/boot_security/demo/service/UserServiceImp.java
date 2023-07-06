@@ -40,12 +40,15 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public User saveUser(User user) {
-        if (user.getPassword().isEmpty()) {
-            user.setPassword(userRepository.findById(user.getId()).get().getPassword());
-        } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user != null) {
+            if (user.getPassword().isEmpty()) {
+                user.setPassword(userRepository.findById(user.getId()).get().getPassword());
+            } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            return userRepository.save(user);
         }
-        return userRepository.save(user);
+        return null;
     }
 
     @Transactional
