@@ -16,30 +16,37 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Column
+    private String role;
 
     @Transient
     @ManyToMany
-    private List<User> users;
+    private Set<User> users;
 
     public Role() {
     }
 
-    public Role(String name) {
-        this.name = name;
+
+    public Role(Long id, String role) {
+        this.id = id;
+        this.role = role;
+    }
+
+
+    public Role(String role) {
+        this.role = role;
     }
 
     @Override
     public String getAuthority() {
-        return name;
+        return role;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
     public String getShortName() {
-        return name.replaceAll("ROLE_","");
+        return role.replaceAll("ROLE_","");
     }
 }

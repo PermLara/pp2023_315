@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,7 +20,6 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String password;
 
     @Column(name = "name")
@@ -33,12 +33,11 @@ public class User implements UserDetails {
 
     @ManyToMany
     @Fetch(FetchMode.JOIN)
-    private List<Role> roles;
-
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName()))
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole()))
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +50,7 @@ public class User implements UserDetails {
     }
 
     public User(String firstName, String lastName,
-                String username, String password, List<Role> roles) {
+                String username, String password, Set<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -80,7 +79,7 @@ public class User implements UserDetails {
     }
 
     public List<String> getRolesNames() {
-        return roles.stream().map(Role::getName)
+        return roles.stream().map(Role::getRole)
                 .collect(Collectors.toList());
     }
 }

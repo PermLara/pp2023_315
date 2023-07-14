@@ -1,8 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +13,6 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-@ControllerAdvice
 @RequestMapping("/")
 public class AdminController {
     private final UserService userService;
@@ -36,7 +33,7 @@ public class AdminController {
         List<Role> allRoles = roleService.getAllRoles();
         model.addAttribute("roleSelect", allRoles);
         model.addAttribute("newUser", new User());
-        return "admin";
+        return "admin_fetch";
     }
 
     @PostMapping("/admin/create")
