@@ -114,7 +114,7 @@
 
                                         </tr>
                                         </thead>
-                                        <tbody id="tableBodyAdmin">
+                                        <tbody id="admin-table-body">
                                         <tr th:each="u : ${users}">
                                             <td th:text="${u.id}"></td>
                                             <td th:text="${u.firstName}"></td>
@@ -156,8 +156,8 @@
                                                                                type="number"
                                                                                class="form-control"
                                                                                th:id="${'edit-id'+u.id}"
-                                                                               th:value="*{id}"
-                                                                               th:placeholder="${u.id}"
+                                                                               th:value="${u.id}"
+
                                                                                disabled="disabled"
                                                                                readonly>
                                                                     </div>
@@ -170,7 +170,8 @@
                                                                                type="text"
                                                                                class="form-control"
                                                                                th:id="${'edit-firstName'+u.id}"
-                                                                               th:value="${u.firstName}">
+                                                                               th:value="${u.firstName}"
+                                                                               >
                                                                     </div>
                                                                     <div class="text-center">
                                                                         <label th:for="${'edit-lastName'+u.id}"
@@ -206,7 +207,7 @@
                                                                                class="form-control"
                                                                                th:id="${'edit-password'+u.id}"
 
-                                                                               th:value="*{password}"
+                                                                               th:value="${u.password}"
                                                                         >
                                                                     </div>
                                                                     <div class="text-center">

@@ -44,8 +44,19 @@
                     >Admin
                     </button>
 
-                    <button sec:authorize="hasRole('USER')" class="nav-link"
-                            id="v-pills-user-tab"
+                    <button sec:authorize="hasRole('USER') && !hasRole('ADMIN')" class="nav-link"
+                            id="v-pills-user-tab-1"
+                            data-bs-toggle="pill"
+                            data-bs-target="#v-pills-user"
+                            type="button" role="tab"
+                            aria-controls="v-pills-user"
+                            aria-selected="true"
+                    >User
+                    </button>
+
+
+                    <button sec:authorize="hasRole('USER') && hasRole('ADMIN')" class="nav-link"
+                            id="v-pills-user-tab-2"
                             data-bs-toggle="pill"
                             data-bs-target="#v-pills-user"
                             type="button" role="tab"
@@ -225,96 +236,108 @@
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit user</h5>
                                     <button type="button" class="btn-close"
-                                            data-bs-dismiss="modal" aria-label="Close">
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close">
                                         <span aria-hidden="true"></span>
                                     </button>
                                 </div>
-                                <form id="edit-form" th:object="${newUser}">
-                                    <div class="text-center">
-                                        <label for="edit-id"
-                                               class="form-label">
-                                            <b>ID</b>
-                                        </label>
-                                        <input name="id"
-                                               type="number"
-                                               class="form-control"
-                                               id="edit-id"
-                                               disabled="disabled"
-                                               readonly>
-                                    </div>
-                                    <div class="text-center">
-                                        <label for="edit-firstName"
-                                               class="form-label">
-                                            <b>First name</b>
-                                        </label>
-                                        <input name="firstName"
-                                               type="text"
-                                               class="form-control"
-                                               id="edit-firstName">
+                                <div class="modal-body auto" style="max-width: 300px">
+                                    <form name="editForm" id="edit-form" th:object="${newUser}">
+                                        <div class="text-center">
+                                            <label for="editId"
+                                                   class="form-label">
+                                                <b>ID</b>
+                                            </label>
+                                            <input name="id"
+                                                   type="number"
+                                                   class="form-control"
+                                                   id="editId"
+                                                   disabled="disabled"
+                                                   readonly>
+                                        </div>
+                                        <div class="text-center">
+                                            <label for="editFirstName"
+                                                   class="form-label">
+                                                <b>First name</b>
+                                            </label>
+                                            <input name="firstName"
+                                                   type="text"
+                                                   class="form-control"
+                                                   id="editFirstName">
 
-                                    </div>
-                                    <div class="text-center">
-                                        <label for="edit-lastName"
-                                               class="form-label">
-                                            <b>Last name</b>
-                                        </label>
-                                        <input name="lastName"
-                                               type="text"
-                                               class="form-control"
-                                               id="edit-lastName">
-                                    </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <label for="editLastName"
+                                                   class="form-label">
+                                                <b>Last name</b>
+                                            </label>
+                                            <input name="lastName"
+                                                   type="text"
+                                                   class="form-control"
+                                                   id="editLastName">
+                                        </div>
 
-                                    <div class="text-center">
-                                        <label for="edit-username"
-                                               class="form-label">
-                                            <b>Email</b>
-                                        </label>
-                                        <input name="username"
-                                               type="email"
-                                               class="form-control"
-                                               id="edit-username">
-                                    </div>
+                                        <div class="text-center">
+                                            <label for="editUsername"
+                                                   class="form-label">
+                                                <b>Email</b>
+                                            </label>
+                                            <input name="username"
+                                                   type="email"
+                                                   class="form-control"
+                                                   id="editUsername">
+                                        </div>
 
-                                    <div class="text-center">
-                                        <label for="edit-password"
-                                               class="form-label">
-                                            <b>Password</b>
-                                        </label>
-                                        <input name="password"
-                                               type="password"
-                                               class="form-control"
-                                               id="edit-password"
-                                        >
-                                    </div>
-                                    <div class="text-center">
-                                        <label for="edit-roles"
-                                        ><b>Role</b>:</label>
-                                        <select multiple class="form-control"
-                                                id="edit-roles"
-                                                required="required"
-                                                size="2"
-                                                name="roles">
-                                            <option
-                                                    name="role"
-                                                    th:id="${'role-selection-id' +role.id}"
-                                                    th:each="role : ${roleSelect}"
-                                                    th:value="${role.id}"
-                                                    th:selected="${role.role.contains('USER')}"
-                                                    th:text="${role.getShortName}">
-                                                Roles
-                                            </option>
-                                        </select>
-                                    </div>
-
-
-                                </form>
+                                        <div class="text-center">
+                                            <label for="editPassword"
+                                                   class="form-label">
+                                                <b>Password</b>
+                                            </label>
+                                            <input name="password"
+                                                   type="password"
+                                                   class="form-control"
+                                                   id="editPassword"
+                                            >
+                                        </div>
+                                        <div class="text-center">
+                                            <label for="editRoles"
+                                            ><b>Role</b>:</label>
+                                            <select multiple class="form-control"
+                                                    id="editRoles"
+                                                    required="required"
+                                                    size="2"
+                                                    name="roles"
+                                                    th:data-roleSelect="${roleSelect}">
+                                                <option
+                                                        name="role"
+                                                        th:each="role : ${roleSelect}"
+                                                        th:value="${role.id}"
+                                                        th:selected="false"
+                                                        th:text="${role.getShortName}">
+                                                    Roles
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close
+                                <button type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                        id="editClose"
+                                >
+                                    Close
                                 </button>
-                                <button type="submit" class="btn btn-primary"
-                                        form="edit-form">Edit
+                                <button type="submit"
+                                        class="btn btn-primary"
+                                        form="edit-form"
+                                        id="edit-submit"
+                                >
+
+
+
+                                    Edit
                                 </button>
                             </div>
                         </div>
@@ -327,12 +350,13 @@
                                 <div class="modal-header">
                                     <h5 class="modal-title">Delete user</h5>
                                     <button type="button" class="btn-close"
-                                            data-bs-dismiss="modal" aria-label="Close">
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close">
                                         <span aria-hidden="true"></span>
                                     </button>
                                 </div>
                                 <div class="modal-body auto" style="max-width: 300px; margin: auto;">
-                                    <form id="delete-form">
+                                    <form name="deleteForm" id="delete-form">
                                         <div class="text-center">
                                             <label for="delete-id"
                                                    class="form-label">
@@ -400,7 +424,8 @@
                                                         name="role"
                                                         th:each="role : ${roleSelect}"
                                                         th:value="${role.id}"
-                                                        th:text="${role.getShortName()}">
+                                                        th:text="${role.getShortName()}"
+                                                >
                                                     Roles
                                                 </option>
                                             </select>
@@ -475,18 +500,40 @@
         crossorigin="anonymous"></script>
 
 <script>
-    const url_admin = 'http://localhost:8080/api/admin'
+    const url = 'http://localhost:8080/api/admin'
+
+    // const userFetchService = {
+    //     head: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json',
+    //         'Referer': null
+    //     },
+    //
+    //     findAllUsers: async () => await fetch('api/admin'),
+    //     findOneUser: async (id) => await fetch(`api/admin/${id}`),
+    //     addNewUser: async (user) => await fetch('api/admin', {
+    //         method: 'POST',
+    //         headers: userFetchService.head,
+    //         body: JSON.stringify(user)
+    //     }),
+    //     updateUser: async (user, id) => await fetch(`api/admin/${id}`, {
+    //         method: 'PUT',
+    //         headers: userFetchService.head,
+    //         body: JSON.stringify(user)
+    //     }),
+    //     deleteUser: async (id) => await fetch(`api/admin/${id}`, {method: 'DELETE', headers: userFetchService.head})
+    // }
+
 
     function getAdminPage() {
-        console.log("****getAdminPage:main.js")
-        fetch(url_admin)
+
+        fetch(url)
             .then(response => response.json())
             .then(listUsers => loadTable(listUsers))
     }
 
     function loadTable(listUsers) {
         let response = ''
-        console.log("****loadTable:main.js")
         for (let user of listUsers) {
             response +=
                 `<tr>
@@ -510,25 +557,26 @@
         document.getElementById('admin-table-body').innerHTML = response
     }
 
-    getAdminPage()
-
+    getAdminPage();
+    editInDB();
+    deleteInDB();
 
     function closeModal() {
         document.querySelectorAll(".btn-close").forEach((btn) => btn.click())
     }
 
-    document.getElementById('create-form').addEventListener('submit', (e) => {
-        e.preventDefault()
-        let roles = document.getElementById('create-roles')
+    document.getElementById('create-form').addEventListener('submit', e => {
+        e.preventDefault();
+        let options = document.getElementById('create-roles').options;
         let rolesToArray = []
-        for (let i = 0; i < roles.options.length; i++) {
-            if (roles.options[i].selected) {
-                rolesToArray.push({id: roles.options[i].value, name: 'ROLE_' + roles.options[i].innerHTML})
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].selected) {
+                rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML})
             }
         }
-        console.log(rolesToArray)
+        console.log("rolesToArray=", rolesToArray)
 
-        fetch(url_admin, {
+        fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -541,9 +589,9 @@
                 roles: rolesToArray
             })
         })
-            .then((response) => {
+            .then(response => {
                 if (response.ok) {
-                    fetch(url_admin)
+                    fetch(url)
                         .then(res => res.json())
                         .then(listUsers => {
                             loadTable(listUsers)
@@ -553,69 +601,104 @@
             })
     })
 
+    //it works
     function editModal(id) {
-        console.log('*****запускаю editModal', id);
-        fetch(url_admin + '/' + id, {
+        let editForm = document.forms["editForm"];
+        console.log("editForm ", id, editForm);
+
+
+        fetch(url + '/' + id, {
+            method: "GET",
             headers: {
+
                 'Accept': 'application/json',
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         }).then(response => {
             response.json()
                 .then(u => {
-                    document.getElementById('edit-id').value = u.id
-                    document.getElementById('edit-firstName').value = u.firstName
-                    document.getElementById('edit-lastName').value = u.lastName
-                    document.getElementById('edit-username').value = u.username
-                    document.getElementById('edit-password').value = "****"
-
+                    editForm.elements.id.value = u.id;
+                    editForm.firstName.value = u.firstName;
+                    editForm.lastName.value = u.lastName;
+                    editForm.username.value = u.username;
+                    editForm.password.value = "****";
+                    let options = editForm.roles.options;
+                    constructRoles(u, options);
                 })
         })
     }
 
-
-    async function editUser() {
-        document.getElementById('delete-form').addEventListener('submit', async (e) => {
-            e.preventDefault()
-
-            console.log('*****запускаю editUser ', document.getElementById('edit-id').value);
-            let roles = document.getElementById('edit-roles')
-            let rolesToArray = []
-            for (let i = 0; i < roles.options.length; i++) {
-                if (roles.options[i].selected) {
-                    rolesToArray.push({id: roles.options[i].value, name: 'ROLE_' + roles.options[i].innerHTML})
+    function constructRoles(u, options) {
+        for (let i = 0; i < options.length; i++) {
+            let roleName = options[i].innerHTML;
+            for (let j = 0; j < u.roles.length; j++) {
+                if (u.roles[j].role === "ROLE_" + roleName) {
+                    options[i].selected = true;
+                    break;
                 }
+                options[i].selected = false;
             }
-            console.log(rolesToArray);
+        }
+    }
 
+    //ЭТО НЕ ЗАПУСКАЕТСЯ, ПОЧЕМУ??
+    async function editInDB() {
+        document.getElementById("edit-form").addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById("editId").value;
+            console.log('***** запустилось edit в БД, id=', id);
+            let editForm = document.forms["editForm"];
+            let options = editForm.roles.options;
+            let rolesToArray = [];
+            for (let i = 0; i < options.length; i++) {
+                console.log("бежим по options, смотрим, кто selected, roles[", i, "].selected=", options[i].selected)
+                if (options[i].selected) {
+                    rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML});
+                }
 
-            await fetch(url_admin + '/' + document.getElementById("edit-id").value, {
-                method: "PATCH",
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=UTF-8'
-                },
-                body: JSON.stringify({
-                    id: document.getElementById("edit-id").value,
-                    firstName: document.getElementById("edit-firstName").value,
-                    lastName: document.getElementById("edit-lastName").value,
-                    username: document.getElementById("edit-username").value,
-                    password: document.getElementById("edit-password").value,
-                    roles: rolesToArray
-                })
+            }
+            console.log("editInDB: rolesToArray", rolesToArray);
+            console.log(JSON.stringify({
+                id: id,
+                firstName: editForm.firstName.value,
+                lastName: editForm.lastName.value,
+                username: editForm.username.value,
+                password: editForm.password.value,
+                roles: rolesToArray
+            }));
+
+            fetch(url + "/" + id,
+                {
+                    method: "PATCH",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        firstName: editForm.firstName.value,
+                        lastName: editForm.lastName.value,
+                        username: editForm.username.value,
+                        password: editForm.password.value,
+                        roles: rolesToArray
+                    })
+                }).then((response) => {
+                if (response.ok) {
+                closeModal()
+                fetch(url)
+                    .then(res => res.json())
+                    .then(listUsers => {
+                        loadTable(listUsers)
+                    })
+                document.getElementById("all-users-tab").click()
+                }
             })
-            closeModal()
-            fetch(url_admin)
-                .then(response => response.json())
-                .then(listUsers => {
-                    loadTable(listUsers)
-                })
         })
     }
 
     function deleteModal(id) {
-        console.log('запустилось окно удаления');
-        fetch(url_admin + '/' + id, {
+
+        fetch(url + '/' + id, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json;charset=UTF-8'
@@ -626,33 +709,40 @@
                 document.getElementById('delete-firstName').value = u.firstName;
                 document.getElementById('delete-lastName').value = u.lastName;
                 document.getElementById('delete-username').value = u.username;
-
+                let options = document.forms["deleteForm"].roles.options;
+                constructRoles(u, options);
             })
         })
     }
 
-    async function deleteUser() {
-        document.getElementById('delete-form').addEventListener('submit', (e) => {
+    //works!
+    async function deleteInDB() {
+        document.getElementById('delete-form').addEventListener('submit', e => {
             e.preventDefault()
-
+            console.log('***** запустилось удаление из БД');
             const id = document.getElementById("delete-id").value
             console.log('*****Will be deleted', id)
 
-            fetch(url_admin + "/" + id,
+            fetch(url + "/" + id,
                 {
                     method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(() => {
-                fetch(url_admin)
-                    .then(response => response.json())
-                    .then(listUsers => {
-                        loadTable(listUsers)
-                    })
+                }).then((response) => {
+                if (response.ok) {
+                    closeModal()
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(listUsers => {
+                            loadTable(listUsers)
+                        })
+                    document.getElementById("all-users-tab").click()
+                }
             })
         })
     }
+
 
 </script>
 </body>
