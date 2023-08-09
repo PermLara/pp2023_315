@@ -18,7 +18,8 @@
         <a class="navbar-brand ">
             <b> <span th:text="${principalUser.username}"></span> </b>
             <span>with roles:</span>
-            <span th:each="role :${principalUser.roles}"><span th:text="${role.getShortName + ' '}"></span></span>
+            <span id="principalUserRoles" th:each="role :${principalUser.roles}"><span
+                    th:text="${role.getShortName + ' '}"></span></span>
         </a>
         <a class="btn btn-link text-white-50"
            style="text-decoration: none"
@@ -40,21 +41,10 @@
                             type="button" role="tab"
                             aria-controls="v-pills-admin"
                             aria-selected="true"
+                            onclick="hideVPiIllsUser()"
 
                     >Admin
                     </button>
-
-                    <button sec:authorize="hasRole('USER') && !hasRole('ADMIN')" class="nav-link"
-                            id="v-pills-user-tab-1"
-                            data-bs-toggle="pill"
-                            data-bs-target="#v-pills-user"
-                            type="button" role="tab"
-                            aria-controls="v-pills-user"
-                            aria-selected="true"
-                    >User
-                    </button>
-
-
                     <button sec:authorize="hasRole('USER') && hasRole('ADMIN')" class="nav-link"
                             id="v-pills-user-tab-2"
                             data-bs-toggle="pill"
@@ -62,6 +52,18 @@
                             type="button" role="tab"
                             aria-controls="v-pills-user"
                             aria-selected="false"
+                            onclick="hideVPiIllsTabContent()"
+                            onload="setDisplayVPiIllsUser()"
+                    >User
+                    </button>
+                    <button sec:authorize="hasRole('USER') && !hasRole('ADMIN')" class="nav-link"
+                            id="v-pills-user-tab-1"
+                            data-bs-toggle="pill"
+                            data-bs-target="#v-pills-user"
+                            type="button" role="tab"
+                            aria-controls="v-pills-user"
+                            aria-selected="true"
+
                     >User
                     </button>
                 </div>
@@ -242,7 +244,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body auto" style="max-width: 300px">
-                                    <form name="editForm" id="edit-form" th:object="${newUser}">
+                                    <form name="editForm" id="edit-form">
                                         <div class="text-center">
                                             <label for="editId"
                                                    class="form-label">
@@ -318,28 +320,27 @@
                                                 </option>
                                             </select>
                                         </div>
+                                        <button type="button"
+                                                class="btn btn-secondary"
+                                                data-bs-dismiss="modal"
+                                                id="editClose"
+                                        >
+                                            Close
+                                        </button>
+                                        <button type="submit"
+                                                class="btn btn-primary"
+                                                form="edit-form"
+                                                id="edit-submit"
+                                        >
+
+
+                                            Edit
+                                        </button>
                                     </form>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button"
-                                        class="btn btn-secondary"
-                                        data-bs-dismiss="modal"
-                                        id="editClose"
-                                >
-                                    Close
-                                </button>
-                                <button type="submit"
-                                        class="btn btn-primary"
-                                        form="edit-form"
-                                        id="edit-submit"
-                                >
 
 
-
-                                    Edit
-                                </button>
-                            </div>
                         </div>
                     </div>
                     <div class="modal fade"
@@ -456,7 +457,8 @@
                      id="v-pills-user"
                      role="tabpanel"
                      aria-labelledby="v-pills-user-tab"
-                     tabindex="0">
+                     tabindex="0"
+                >
                     <h4>User information-page</h4>
 
                     <div class="container-fluid border rounded">
@@ -481,7 +483,7 @@
                                     <td th:utext="*{lastName}">...</td>
                                     <td th:utext="*{username}">...</td>
                                     <td><span th:each="role :*{roles}"><span
-                                            th:text="${role.getRole() + ' '}"></span></span></td>
+                                            th:text="${role.getShortName() + ' '}"></span></span></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -498,32 +500,13 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+<!--<script src="/static/main.js"></script>-->
 
 <script>
-    const url = 'http://localhost:8080/api/admin'
-
-    // const userFetchService = {
-    //     head: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json',
-    //         'Referer': null
-    //     },
-    //
-    //     findAllUsers: async () => await fetch('api/admin'),
-    //     findOneUser: async (id) => await fetch(`api/admin/${id}`),
-    //     addNewUser: async (user) => await fetch('api/admin', {
-    //         method: 'POST',
-    //         headers: userFetchService.head,
-    //         body: JSON.stringify(user)
-    //     }),
-    //     updateUser: async (user, id) => await fetch(`api/admin/${id}`, {
-    //         method: 'PUT',
-    //         headers: userFetchService.head,
-    //         body: JSON.stringify(user)
-    //     }),
-    //     deleteUser: async (id) => await fetch(`api/admin/${id}`, {method: 'DELETE', headers: userFetchService.head})
-    // }
-
+    const url = 'http://localhost:8080/api/admin';
+    getAdminPage();
+    editInDB();
+    deleteInDB();
 
     function getAdminPage() {
 
@@ -541,7 +524,7 @@
                 <td>${user.firstName}</td>
                 <td>${user.lastName}</td>
                 <td>${user.username}</td>
-                <td id=${'role' + user.id}>${user.roles.map(role => role.role).join(' ')}</td>
+                <td id=${'role' + user.id}>${user.roles.map(role => role.role.replaceAll("ROLE_","")).join(' ')}</td>
                 <td>
                     <button class="btn btn-info" type="button" id="buttonEdit"
                     data-bs-toggle="modal" data-bs-target="#editModal"
@@ -557,13 +540,27 @@
         document.getElementById('admin-table-body').innerHTML = response
     }
 
-    getAdminPage();
-    editInDB();
-    deleteInDB();
 
     function closeModal() {
         document.querySelectorAll(".btn-close").forEach((btn) => btn.click())
     }
+
+    function hideVPiIllsTabContent() {
+        document.getElementById("v-pills-tabContent").style.display = 'none'
+        document.getElementById("v-pills-user").style.display = 'block'
+    }
+
+    function hideVPiIllsUser() {
+        document.getElementById("v-pills-user").style.display = 'none'
+        document.getElementById("v-pills-tabContent").style.display = 'block'
+    }
+
+    function setDisplayVPiIllsUser() {
+        if (document.getElementById("principalUserRoles").innerText.includes('ADMIN')) {
+            document.getElementById("v-pills-admin-tab").click()
+        }
+    }
+
 
     document.getElementById('create-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -574,7 +571,6 @@
                 rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML})
             }
         }
-        console.log("rolesToArray=", rolesToArray)
 
         fetch(url, {
             method: 'POST',
@@ -601,11 +597,8 @@
             })
     })
 
-    //it works
     function editModal(id) {
         let editForm = document.forms["editForm"];
-        console.log("editForm ", id, editForm);
-
 
         fetch(url + '/' + id, {
             method: "GET",
@@ -641,31 +634,19 @@
         }
     }
 
-    //ЭТО НЕ ЗАПУСКАЕТСЯ, ПОЧЕМУ??
-    async function editInDB() {
+    function editInDB() {
         document.getElementById("edit-form").addEventListener('submit', e => {
             e.preventDefault();
             const id = document.getElementById("editId").value;
-            console.log('***** запустилось edit в БД, id=', id);
             let editForm = document.forms["editForm"];
             let options = editForm.roles.options;
             let rolesToArray = [];
             for (let i = 0; i < options.length; i++) {
-                console.log("бежим по options, смотрим, кто selected, roles[", i, "].selected=", options[i].selected)
                 if (options[i].selected) {
                     rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML});
                 }
 
             }
-            console.log("editInDB: rolesToArray", rolesToArray);
-            console.log(JSON.stringify({
-                id: id,
-                firstName: editForm.firstName.value,
-                lastName: editForm.lastName.value,
-                username: editForm.username.value,
-                password: editForm.password.value,
-                roles: rolesToArray
-            }));
 
             fetch(url + "/" + id,
                 {
@@ -684,13 +665,13 @@
                     })
                 }).then((response) => {
                 if (response.ok) {
-                closeModal()
-                fetch(url)
-                    .then(res => res.json())
-                    .then(listUsers => {
-                        loadTable(listUsers)
-                    })
-                document.getElementById("all-users-tab").click()
+                    closeModal()
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(listUsers => {
+                            loadTable(listUsers)
+                        })
+                    document.getElementById("all-users-tab").click()
                 }
             })
         })
@@ -715,13 +696,10 @@
         })
     }
 
-    //works!
-    async function deleteInDB() {
+    function deleteInDB() {
         document.getElementById('delete-form').addEventListener('submit', e => {
             e.preventDefault()
-            console.log('***** запустилось удаление из БД');
             const id = document.getElementById("delete-id").value
-            console.log('*****Will be deleted', id)
 
             fetch(url + "/" + id,
                 {
@@ -742,7 +720,6 @@
             })
         })
     }
-
 
 </script>
 </body>

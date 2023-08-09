@@ -33,7 +33,6 @@ public class Kata315RestController {
 
     @PostMapping("/admin")
     public ResponseEntity<HttpStatus> createUser(@RequestBody User user) {
-        //todo
         userService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
