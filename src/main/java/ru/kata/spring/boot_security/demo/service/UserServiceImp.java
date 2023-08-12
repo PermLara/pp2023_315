@@ -5,36 +5,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.UserRepository;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
 
 import java.util.List;
 
 @Service
-@Transactional
 public class UserServiceImp implements UserService {
-    private final UserRepository userRepository;
+
+    private final UserDao dao;
+
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImp(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public UserServiceImp(UserDao userDao, @Lazy PasswordEncoder passwordEncoder) {
+        this.dao = userDao;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return dao.findByUsername(username);
     }
 
     @Transactional(readOnly = true)
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return dao.findById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<User> listUsers() {
-        return userRepository.findAll();
+        return dao.listUser();
     }
 
     @Transactional
@@ -42,11 +43,11 @@ public class UserServiceImp implements UserService {
     public User saveUser(User user) {
         if (user != null) {
             if (user.getPassword().isEmpty()) {
-                user.setPassword(userRepository.findById(user.getId()).get().getPassword());
+                user.setPassword(dao.findById(user.getId()).getPassword());
             } else {
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
             }
-            return userRepository.save(user);
+            return dao.updateUser(user);
         }
         return null;
     }
@@ -54,6 +55,6 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        dao.removeById(id);
     }
 }
