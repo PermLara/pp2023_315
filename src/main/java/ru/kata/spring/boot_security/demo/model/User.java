@@ -107,6 +107,18 @@ public class User implements UserDetails {
     }
 
     @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 //        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRole()))
 //                .collect(Collectors.toList());

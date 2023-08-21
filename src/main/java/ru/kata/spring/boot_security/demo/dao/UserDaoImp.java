@@ -15,7 +15,7 @@ public class UserDaoImp implements UserDao {
 
 
     @Override
-    public List<User> listUser() {
+    public List<User> listUsers() {
         return entityManager.createQuery("FROM User u", User.class)
                 .getResultList();
     }
@@ -47,11 +47,11 @@ public class UserDaoImp implements UserDao {
 
     @Override
     public User findByUsername(String username) {
-
-        //return entityManager.find(User.class, username);
-        return entityManager.createQuery("FROM User u WHERE u.username LIKE :username", User.class)
+        User u1 = entityManager.createQuery("FROM User u WHERE u.username LIKE :username", User.class)
                 .setParameter("username", username)
                 .getSingleResult();
+        System.out.println("findByUsername: найден в userDaoImp " + u1);
+        return u1;
 
     }
 }

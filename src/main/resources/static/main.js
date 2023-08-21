@@ -1,25 +1,63 @@
 const url = 'http://localhost:8080/api/admin';
+fillRoleModal();
+getAdminUser();
 getAdminPage();
 editInDB();
 deleteInDB();
 
+function fillRoleModal() {
+    let roleSelect = fetch(url + "/roleSelect").then((response) => response.json());
+    let result = '';
+    roleSelect.then(roles => {
+        for (let i in roles) {
+            result += `<option name="role" value=${roles[i].id}>${roles[i].role.replace("ROLE_", "")}</option>`;
+        }
+        document.getElementById('create-roles').innerHTML = result;
+        document.getElementById('editRoles').innerHTML = result;
+        document.getElementById('delete-roles').innerHTML = result;
+    });
+}
+
+function getAdminUser() {
+    let currentUser = fetch(url + "/adminUser").then((response) => response.json());
+    let roles = '';
+    let result = '';
+    currentUser.then((user) => {
+        user.roles.forEach((name) => {
+            roles += " ";
+            roles += name.role.replace("ROLE_", "");
+        });
+        document.getElementById("navbar-email").innerHTML = user.username;
+        document.getElementById("navbar-roles").innerHTML = roles;
+        result += `<tr>
+                    <td>${user.id}</td>
+                    <td>${user.firstName}</td>
+                    <td>${user.lastName}</td>
+                    <td>${user.username}</td>
+                    <td>${roles}</td>
+                   </tr>`;
+        document.getElementById("user-table-body").innerHTML = result;
+    });
+}
+
 function getAdminPage() {
 
-    fetch(url)
+    fetch(url + "/listUsers")
         .then(response => response.json())
-        .then(listUsers => loadTable(listUsers))
+        .then(listUsers => loadTable(listUsers));
+
 }
 
 function loadTable(listUsers) {
-    let response = ''
+    let result = '';
     for (let user of listUsers) {
-        response +=
+        result +=
             `<tr>
                 <td>${user.id}</td>
                 <td>${user.firstName}</td>
                 <td>${user.lastName}</td>
                 <td>${user.username}</td>
-                <td id=${'role' + user.id}>${user.roles.map(role => role.role.replaceAll("ROLE_","")).join(' ')}</td>
+                <td id=${'role' + user.id}>${user.roles.map(role => role.role.replaceAll("ROLE_", "")).join(' ')}</td>
                 <td>
                     <button class="btn btn-info" type="button" id="buttonEdit"
                     data-bs-toggle="modal" data-bs-target="#editModal"
@@ -32,33 +70,16 @@ function loadTable(listUsers) {
                 </td>
             </tr>`
     }
-    document.getElementById('admin-table-body').innerHTML = response
+    document.getElementById('admin-table-body').innerHTML = result;
 }
-
 
 function closeModal() {
-    document.querySelectorAll(".btn-close").forEach((btn) => btn.click())
+    document.querySelectorAll(".btn-close").forEach((btn) => btn.click());
 }
-
-function hideVPiIllsTabContent() {
-    document.getElementById("v-pills-tabContent").style.display = 'none'
-    document.getElementById("v-pills-user").style.display = 'block'
-}
-
-function hideVPiIllsUser() {
-    document.getElementById("v-pills-user").style.display = 'none'
-    document.getElementById("v-pills-tabContent").style.display = 'block'
-}
-
-function setDisplayVPiIllsUser() {
-    if (document.getElementById("principalUserRoles").innerText.includes('ADMIN')) {
-        document.getElementById("v-pills-admin-tab").click()
-    }
-}
-
 
 document.getElementById('create-form').addEventListener('submit', e => {
     e.preventDefault();
+
     let options = document.getElementById('create-roles').options;
     let rolesToArray = []
     for (let i = 0; i < options.length; i++) {
@@ -66,39 +87,41 @@ document.getElementById('create-form').addEventListener('submit', e => {
             rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML})
         }
     }
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({
-            firstName: document.getElementById('create-firstName').value,
-            lastName: document.getElementById('create-lastName').value,
-            username: document.getElementById('create-username').value,
-            password: document.getElementById('create-password').value,
-            roles: rolesToArray
+    try {
+        fetch(url+"/create", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({
+                firstName: document.getElementById('create-firstName').value,
+                lastName: document.getElementById('create-lastName').value,
+                username: document.getElementById('create-username').value,
+                password: document.getElementById('create-password').value,
+                roles: rolesToArray
+            })
         })
-    })
-        .then(response => {
-            if (response.ok) {
-                fetch(url)
-                    .then(res => res.json())
-                    .then(listUsers => {
-                        loadTable(listUsers)
-                    })
-                document.getElementById("all-users-tab").click()
-            }
-        })
+            .then(response => {
+                if (response.ok) {
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(listUsers => {
+                            loadTable(listUsers)
+                        });
+                    document.getElementById("all-users-tab").click();
+                }
+            })
+    } catch (e) {
+        console.log(e);
+    }
 })
 
 function editModal(id) {
     let editForm = document.forms["editForm"];
-
+    fillRoleModal();
     fetch(url + '/' + id, {
         method: "GET",
         headers: {
-
             'Accept': 'application/json',
             'Content-Type': 'application/json;charset=UTF-8'
         }
@@ -140,9 +163,7 @@ function editInDB() {
             if (options[i].selected) {
                 rolesToArray.push({id: options[i].value, role: 'ROLE_' + options[i].innerHTML});
             }
-
         }
-
         fetch(url + "/" + id,
             {
                 method: "PATCH",
@@ -160,20 +181,20 @@ function editInDB() {
                 })
             }).then((response) => {
             if (response.ok) {
-                closeModal()
+                closeModal();
                 fetch(url)
                     .then(res => res.json())
                     .then(listUsers => {
                         loadTable(listUsers)
-                    })
-                document.getElementById("all-users-tab").click()
+                    });
+                document.getElementById("all-users-tab").click();
             }
         })
     })
 }
 
 function deleteModal(id) {
-
+    fillRoleModal();
     fetch(url + '/' + id, {
         headers: {
             'Accept': 'application/json',
@@ -193,8 +214,8 @@ function deleteModal(id) {
 
 function deleteInDB() {
     document.getElementById('delete-form').addEventListener('submit', e => {
-        e.preventDefault()
-        const id = document.getElementById("delete-id").value
+        e.preventDefault();
+        const id = document.getElementById("delete-id").value;
 
         fetch(url + "/" + id,
             {
@@ -204,13 +225,13 @@ function deleteInDB() {
                 }
             }).then((response) => {
             if (response.ok) {
-                closeModal()
+                closeModal();
                 fetch(url)
                     .then(res => res.json())
                     .then(listUsers => {
                         loadTable(listUsers)
-                    })
-                document.getElementById("all-users-tab").click()
+                    });
+                document.getElementById("all-users-tab").click();
             }
         })
     })
